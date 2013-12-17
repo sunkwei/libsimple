@@ -76,12 +76,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\circ_buf.h" />
-    <ClInclude Include="include\list.h" />
-    <ClInclude Include="include\mutex.h" />
-    <ClInclude Include="include\semaphore.h" />
-    <ClInclude Include="include\thread.h" />
-    <ClInclude Include="include\threadpool.h" />
+    <ClInclude Include="include\simple\circ_buf.h" />
+    <ClInclude Include="include\simple\list.h" />
+    <ClInclude Include="include\simple\mutex.h" />
+    <ClInclude Include="include\simple\semaphore.h" />
+    <ClInclude Include="include\simple\thread.h" />
+    <ClInclude Include="include\simple\threadpool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\circ_buf.c" />
