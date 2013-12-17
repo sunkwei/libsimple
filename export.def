@@ -1,0 +1,28 @@
+EXPORTS
+	simple_circ_buf_create
+	simple_circ_buf_destroy
+	simple_circ_buf_get_space_cnt
+	simple_circ_buf_get_data_cnt
+	simple_circ_buf_read
+	simple_circ_buf_write
+
+	simple_mutex_create
+	simple_mutex_destroy
+	simple_mutex_lock
+	simple_mutex_unlock
+
+	simple_sem_create
+	simple_sem_destroy
+	simple_sem_post
+	simple_sem_wait
+
+	simple_thread_create
+	simple_thread_join
+	simple_thread_msleep
+
+	simple_thread_pool_create
+	simple_thread_pool_destroy
+	simple_thread_pool_add_task
+
+	simple_task_create
+	simple_task_destroy
