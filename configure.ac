@@ -23,4 +23,6 @@ AC_CHECK_HEADERS([malloc.h memory.h stdlib.h])
 # Checks for library functions.
 AC_FUNC_MALLOC
 
-AC_OUTPUT( [src/Makefile])
+AC_OUTPUT( [src/Makefile
+	   test/Makefile]
+	 )

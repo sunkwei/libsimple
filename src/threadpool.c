@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/thread.h"
-#include "../include/list.h"
-#include "../include/threadpool.h"
+#include "../include/simple/thread.h"
+#include "../include/simple/list.h"
+#include "../include/simple/threadpool.h"
 
 struct task_t
 {

@@ -6,7 +6,7 @@
 #else
 #  include <semaphore.h>
 #endif // os
-#include "../include/semaphore.h"
+#include "../include/simple/semaphore.h"
 
 struct semaphore_t
 {

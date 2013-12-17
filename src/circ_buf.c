@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
-#include "../include/circ_buf.h"
-#include "../include/mutex.h"
+#include "../include/simple/circ_buf.h"
+#include "../include/simple/mutex.h"
 
 typedef struct circ_buf_t
 {

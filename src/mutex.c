@@ -5,7 +5,7 @@
 #else
 #  include <pthread.h>
 #endif //
-#include "../include/mutex.h"
+#include "../include/simple/mutex.h"
 
 struct mutex_t
 {

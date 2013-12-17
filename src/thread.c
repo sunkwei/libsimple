@@ -9,7 +9,7 @@
 #  include <pthread.h>
 #  include <unistd.h>
 #endif // 
-#include "../include/thread.h"
+#include "../include/simple/thread.h"
 
 struct thread_t
 {
