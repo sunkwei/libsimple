@@ -19,6 +19,7 @@ EXPORTS
 	simple_thread_create
 	simple_thread_join
 	simple_thread_msleep
+	simple_thread_id
 
 	simple_thread_pool_create
 	simple_thread_pool_destroy

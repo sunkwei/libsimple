@@ -24,24 +24,30 @@ typedef struct task_list
 
 struct thread_pool_t
 {
-	list_head threads;		// ËùÓĞ¹¤×÷Ïß³Ì
-	list_head tasks;		// ÈÎÎñ¶ÓÁĞ
-	mutex_t *lock;			// ÈÎÎñ¶ÓÁĞËø
-	semaphore_t *sem;		// µ±Ìí¼ÓÈÎÎñÊ±£¬»½ĞÑ¹¤×÷Ïß³Ì
-	int thread_cnt;			// ¹¤×÷Ïß³ÌÊıÄ¿
-	int quit;				// ÍË³ö±ê¼Ç
+	list_head threads;		// æ‰€æœ‰å·¥ä½œçº¿ç¨‹
+	list_head tasks;		// ä»»åŠ¡é˜Ÿåˆ—
+	mutex_t *lock;			// ä»»åŠ¡é˜Ÿåˆ—é”
+	semaphore_t *sem;		// å½“æ·»åŠ ä»»åŠ¡æ—¶ï¼Œå”¤é†’å·¥ä½œçº¿ç¨‹
+	int thread_cnt;			// å·¥ä½œçº¿ç¨‹æ•°ç›®
+	int quit;				// é€€å‡ºæ ‡è®°
 };
 
 static int _thread_cnt(int cnt)
 {
-	return 8;
+	if (cnt <= 0)
+		return 4;
+	else
+		return cnt;
 }
 
-// ¹¤×÷Ïß³Ìº¯Êı
+// å·¥ä½œçº¿ç¨‹å‡½æ•°
 static int _thread_proc(void *p)
 {
 	thread_pool_t *tp = (thread_pool_t*)p;
 	task_t *task = 0;
+
+	fprintf(stderr, "%s:%d working thread started!\n",
+			__FUNCTION__, simple_thread_id());
 
 	while (!tp->quit) {
 		simple_sem_wait(tp->sem);
@@ -64,6 +70,9 @@ static int _thread_proc(void *p)
 		}
 	}
 
+	fprintf(stderr, "%s:%d working thread terminate!\n",
+			__FUNCTION__, simple_thread_id());
+
 	return 0;
 }
 
@@ -76,8 +85,8 @@ thread_pool_t *simple_thread_pool_create(int cnt)
 
 	p->sem = simple_sem_create(0);
 	p->lock = simple_mutex_create();
-	p->threads.next = &p->threads, p->threads.prev = &p->threads;
-	p->tasks.prev = &p->tasks, p->tasks.next = &p->tasks;
+	list_init(&p->threads);
+	list_init(&p->tasks);
 	p->quit = 0;
 
 	for (i = 0; i < p->thread_cnt; i++) {
@@ -127,10 +136,10 @@ int simple_thread_pool_add_task(thread_pool_t *p, task_t *t)
 	((task_list*)n)->task = t;
 
 	simple_mutex_lock(p->lock);
-	list_add_tail(n, &p->tasks);
+	list_add(n, &p->tasks);
 	simple_mutex_unlock(p->lock);
 
-	simple_sem_post(p->sem);	// Í¨ÖªÓĞĞÂµÄÈÎÎñ
+	simple_sem_post(p->sem);	// é€šçŸ¥æœ‰æ–°çš„ä»»åŠ¡
 
 	return 0;
 }

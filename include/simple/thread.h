@@ -6,7 +6,7 @@
 
 typedef struct thread_t thread_t;
 
-/** 工作线程函数 */
+/** 宸ヤ綔绾跨▼鍑芥暟 */
 typedef int (*simple_thread_proc)(void *opaque);
 
 thread_t *simple_thread_create(simple_thread_proc proc, void *opaque);

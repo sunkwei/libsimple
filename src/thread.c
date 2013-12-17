@@ -8,6 +8,7 @@
 #else
 #  include <pthread.h>
 #  include <unistd.h>
+#  include <syscall.h>
 #endif // 
 #include "../include/simple/thread.h"
 
@@ -36,6 +37,15 @@ static void* _posix_proc(void *p)
 	return 0;
 }
 #endif // os
+
+int simple_thread_id()
+{
+#ifdef WIN32
+	return GetCurrentThreadId();
+#else
+	return syscall(SYS_gettid);
+#endif // os
+}
 
 thread_t *simple_thread_create(simple_thread_proc proc, void *opaque)
 {

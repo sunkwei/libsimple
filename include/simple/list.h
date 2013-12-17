@@ -1,7 +1,7 @@
 #ifndef __list__hh
 #define __list__hh
 
-/** ³­Ï® linux kernel µÄ list.h
+/** æŠ„è¢­ linux kernel çš„ list.h
  */
 
 #ifdef __cplusplus
@@ -15,11 +15,11 @@ typedef struct list_head
 	struct list_head *prev, *next;
 } list_head;
 
-#define __LIST_ADD(_node,_prev,_next) { \
-		(_next)->prev = _node; \
-		(_node)->next = _next; \
-		(_node)->prev = _prev; \
-		(_prev)->next = _node; \
+#define __LIST_ADD(_new,_prev,_next) { \
+		(_next)->prev = _new; \
+		(_new)->next = _next; \
+		(_new)->prev = _prev; \
+		(_prev)->next = _new; \
 	}
 
 #define __LIST_SPLICE(_list, _prev, _next) \
@@ -40,25 +40,21 @@ typedef struct list_head
 		(_n2)->next = _n1next, (_n1next)->prev = _n2;	\
 	}
 
-/////////////////////// ÒÔÏÂÎª³£ÓÃ api //////////////////////
+/////////////////////// ä»¥ä¸‹ä¸ºå¸¸ç”¨ api //////////////////////
 
-#define LIST_HEAD_INIT(name) { &(name), &(name) }
-#define LIST_HEAD(name) \
-	list_head name = LIST_HEAD_INIT(name)
+/** åˆå§‹åŒ– */
+#define list_init(_head) { (_head)->next = (_head)->prev = (_head); }
 
-
-/** ÊÇ·ñ¿Õ */
+/** æ˜¯å¦ç©º */
 #define list_empty(_head) (_head == (_head)->next)
 
 
-/** Ìí¼Ó node µ½ head µÄÁÐ±í */
-#define list_add(node, head) \
-	__LIST_ADD(node, head, (head)->next);
+/** æ·»åŠ  node åˆ° head çš„åˆ—è¡¨ */
+#define list_add(node, head) __LIST_ADD(node, head, (head)->next);
 
-#define list_add_tail(node, head) \
-	__LIST_ADD(node, (head)->prev, head);
+#define list_add_tail(node, head) __LIST_ADD(node, (head)->prev, head);
 
-/** É¾³ý node */
+/** åˆ é™¤ node */
 #define list_del(_node) { \
 		list_head *next = (_node)->next, *prev = (_node)->prev; \
 		(_node)->prev->next = next;	\
@@ -69,11 +65,11 @@ typedef struct list_head
 #define list_for_each(pos, head) \
 	for (pos = (head)->next; pos != (head); pos = pos->next)
 
-/** for each£¬¿ÉÒÔ°²È«É¾³ý pos */
+/** for eachï¼Œå¯ä»¥å®‰å…¨åˆ é™¤ pos */
 #define list_for_each_safe(pos, n, head) \
 	for (pos = (head)->next, n = pos->next; pos != (head); pos = n, n = pos->next)
 
-/** ºÏ²¢ list µ½ head */
+/** åˆå¹¶ list åˆ° head */
 #define list_splice(list, head) \
 	{	\
 		if (!list_empty(list)) __LIST_SPLICE(list, head, head->next); \
@@ -84,7 +80,7 @@ typedef struct list_head
 		if (!list_empty(list)) __LIST_SPLICE(list, head->prev, head); \
 	}
 
-/** ½»»» node1, node2 */
+/** äº¤æ¢ node1, node2 */
 #define list_exchange(node1, node2) \
 	__LIST_EXCHANGE(node1, node1->prev, node1->next, node2, node2->prev, node2->next);
 
