@@ -35,10 +35,13 @@ static void cb_close(void *opaque)
 
 static int _quit = 0;
 
+#ifdef WIN32
 static int WINAPI ctrl_c_handle(DWORD code)
 {
 	_quit = 1;
 }
+#else
+#endif // os
 
 int main()
 {

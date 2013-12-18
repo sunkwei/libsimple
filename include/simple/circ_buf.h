@@ -10,10 +10,10 @@ void simple_circ_buf_destroy(circ_buf_t *cb);
 int simple_circ_buf_get_space_cnt(circ_buf_t *cb);
 int simple_circ_buf_get_data_cnt(circ_buf_t *cb);
 
-/** ±£´æ£¬·µ»ØÊµ¼Ê´æ´¢µÄ×Ö½ÚÊı */
+/** ä¿å­˜ï¼Œè¿”å›å®é™…å­˜å‚¨çš„å­—èŠ‚æ•° */
 int simple_circ_buf_write(circ_buf_t *cb, const void *data, int len);
 
-/** È¡³ö£¬·µ»ØÊµ¼ÊµÃµ½µÄ×Ö½ÚÊı */
+/** å–å‡ºï¼Œè¿”å›å®é™…å¾—åˆ°çš„å­—èŠ‚æ•° */
 int simple_circ_buf_read(circ_buf_t *cb, void *buf, int buflen);
 
 #endif // circ_buf.h

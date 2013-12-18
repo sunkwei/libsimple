@@ -9,6 +9,11 @@ typedef enum FDTYPE
 	TYPE_FILE,
 } FDTYPE;
 
+#ifdef WIN32
+#else
+typedef int SOCKET;
+#endif // os
+
 struct fd_t
 {
 	union {

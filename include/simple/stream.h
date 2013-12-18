@@ -5,14 +5,14 @@
 
 typedef struct stream_t stream_t;
 
-/** ´´½¨»ùÓÚ¾ä±úµÄÁ÷¶ÔÏó */
+/** åˆ›å»ºåŸºäºå¥æŸ„çš„æµå¯¹è±¡ */
 stream_t *simple_stream_open(fd_t *fd);
 void simple_stream_close(stream_t *s);
 
-/** ¶Á */
+/** è¯» */
 int simple_stream_read(stream_t *s, void *buf, int bufsize);
 
-/** Ğ´ */
+/** å†™ */
 int simple_stream_write(stream_t *s, const void *data, int size);
 
 #endif // stream.h

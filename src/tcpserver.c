@@ -15,13 +15,13 @@
 #  define closesocket close
 #endif // os
 
-/** ¶ÔÓ¦Ò»¸ö peer ¶ÔÏó */
+/** å¯¹åº”ä¸€ä¸ª peer å¯¹è±¡ */
 typedef struct client
 {
 	list_head head;
 
 	int sock;
-	void *opaque;	// ÔÚ cb_open() ÖÐ£¬ÓÉµ÷ÓÃÕß¸³Öµ ..
+	void *opaque;	// åœ¨ cb_open() ä¸­ï¼Œç”±è°ƒç”¨è€…èµ‹å€¼ ..
 
 	stream_t *stream;
 	fd_t *fd;
@@ -37,7 +37,7 @@ struct tcpserver_t
 
 	callbacks cbs;
 
-	list_head clients;	// ËùÓÐ»î¶¯¶ÔÏó
+	list_head clients;	// æ‰€æœ‰æ´»åŠ¨å¯¹è±¡
 
 	fd_set fdread, fdwrite, fdexp;
 	int maxfd;
@@ -51,7 +51,7 @@ static client* _make_client(int sock, void *opaque)
 	c->opaque = opaque;
 	c->fd = simple_fd_open_from_socket(c->sock);
 	c->stream = simple_stream_open(c->fd);
-	c->fd->set_nonblock(c->fd, 1);	// ×ÜÊÇÊ¹ÓÃ·Ç×èÈû socket
+	c->fd->set_nonblock(c->fd, 1);	// æ€»æ˜¯ä½¿ç”¨éžé˜»å¡ž socket
 
 	return c;
 }
@@ -97,7 +97,7 @@ static int _start_tcp_listen_sock(int port, const char *bindip)
 	return sock;
 }
 
-/// ¸ù¾Ý clients ÁÐ±í£¬¸üÐÂ fds
+/// æ ¹æ® clients åˆ—è¡¨ï¼Œæ›´æ–° fds
 static void _update_clients(tcpserver_t *ts)
 {
 	list_head *pos;
@@ -144,14 +144,14 @@ tcpserver_t *simple_tcpserver_open(int port, const callbacks *cbs, const char *b
 	ts->maxfd = ts->sock_listen;
 
 	ts->s = simple_fd_open_from_socket(ts->sock_listen);
-	ts->s->set_nonblock(ts->s, 1);	// Ê¹ÓÃ·Ç×èÈû sock
+	ts->s->set_nonblock(ts->s, 1);	// ä½¿ç”¨éžé˜»å¡ž sock
 
 	return ts;
 }
 
 void simple_tcpserver_close(tcpserver_t *ts)
 {
-	// ÊÍ·ÅËùÓÐ clients
+	// é‡Šæ”¾æ‰€æœ‰ clients
 	list_head *pos, *n;
 	list_for_each_safe(pos, n, &ts->clients) {
 		client *c = (client *)pos;
@@ -169,24 +169,24 @@ void simple_tcpserver_close(tcpserver_t *ts)
 void simple_tcpserver_runonce(tcpserver_t *ts)
 {
 	fd_set fdr = ts->fdread, fdw = ts->fdwrite, fde = ts->fdexp;
-	struct timeval tv = { 0, 1000 * 300 };	/*  300 ³¬Ê±  */
+	struct timeval tv = { 0, 1000 * 300 };	/*  300 è¶…æ—¶  */
 
 	int rc = select(ts->maxfd, &fdr, &fdw, &fde, &tv);
 	if (rc == 0) {
-		// ³¬Ê± ..
+		// è¶…æ—¶ ..
 	}
 	else if (rc < 0) {
 		fprintf(stderr, "%s: select err (%d) %s\n", __FUNCTION__, errno, strerror(errno));
 	}
 	else {
-		// ¼ì²éËùÓÐ client sock
+		// æ£€æŸ¥æ‰€æœ‰ client sock
 		list_head *pos, *n;
 		int changed = 0;
 		list_for_each_safe(pos, n, &ts->clients) {
 			client *c = (client*)pos;
 
 			if (FD_ISSET(c->sock, &fdr)) {
-				// XXX£º ¼ì²éÊÇ·ñÎª¹Ø±Õ£¿
+				// XXXï¼š æ£€æŸ¥æ˜¯å¦ä¸ºå…³é—­ï¼Ÿ
 				if (c->fd->is_eof(c->fd)) {
 					if (ts->cbs.cb_close)
 						ts->cbs.cb_close(c->opaque);
@@ -198,13 +198,13 @@ void simple_tcpserver_runonce(tcpserver_t *ts)
 					changed = 1;
 				}
 				else {
-					// Í¨ÖªÓÐÊý¾Ý¿ÉÒÔ¶ÁÈ¡
+					// é€šçŸ¥æœ‰æ•°æ®å¯ä»¥è¯»å–
 					if (ts->cbs.cb_read)
 						ts->cbs.cb_read(c->opaque, c->stream);
 				}
 			}
 
-			// FIXME: ¿ÉÄÜÌ«Æµ·±ÁË°É :(
+			// FIXME: å¯èƒ½å¤ªé¢‘ç¹äº†å§ :(
 			if (FD_ISSET(c->sock, &fdw)) {
 				if (ts->cbs.cb_write) {
 					ts->cbs.cb_write(c->opaque, c->stream);
@@ -212,7 +212,7 @@ void simple_tcpserver_runonce(tcpserver_t *ts)
 			}
 		}
 
-		// ¼ì²é listen sock
+		// æ£€æŸ¥ listen sock
 		if (FD_ISSET(ts->sock_listen, &fdr)) {
 			struct sockaddr from;
 			socklen_t fromlen = sizeof(from);
@@ -222,19 +222,19 @@ void simple_tcpserver_runonce(tcpserver_t *ts)
 			}
 			else {
 				if (!ts->cbs.cb_open) {
-					// Ö±½Ó¹Ø±Õ¼´¿É
+					// ç›´æŽ¥å…³é—­å³å¯
 					closesocket(sock);
 				}
 				else {
 					void *opaque;
 					if (ts->cbs.cb_open(&opaque, &from, fromlen) < 0) {
-						// ÓÃ»§²»¹ØÐÄ¸ÃÁ´½Ó£¬Ö±½ÓÊÍ·Å
+						// ç”¨æˆ·ä¸å…³å¿ƒè¯¥é“¾æŽ¥ï¼Œç›´æŽ¥é‡Šæ”¾
 						closesocket(sock);
 					}
 					else {
-						// TODO: ¼ì²éÊÇ·ñÖ§³Ö¸ü¶àµÄ sock ?
+						// TODO: æ£€æŸ¥æ˜¯å¦æ”¯æŒæ›´å¤šçš„ sock ?
 
-						// ¹¹Ôì client
+						// æž„é€  client
 						client *c = _make_client(sock, opaque);
 						list_add(&c->head, &ts->clients);
 

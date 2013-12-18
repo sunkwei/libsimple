@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <string.h>
 #ifdef WIN32
 #  include <WinSock2.h>
 #  include <WS2tcpip.h>
 #else
 #  include <sys/socket.h>
 #  include <sys/types.h>
+#  include <netdb.h>
 #  include <errno.h>
+#  include <unistd.h>
+#  define closesocket close
 #endif // os
 #include "../include/simple/tcpclient.h"
 #include "fd_impl.h"
@@ -23,7 +27,7 @@ static int _connect(int sock, struct sockaddr *addr, int len, int timeout)
 	int rc, wait = 0;
 	fd_set fds;
 	fd_t *fd = simple_fd_open_from_socket(sock);
-	fd->set_nonblock(fd, 1);	// ×¢Òâ£º×ÜÊÇÊ¹ÓÃ·Ç×èÈû io Ä£Ê½
+	fd->set_nonblock(fd, 1);	// æ³¨æ„ï¼šæ€»æ˜¯ä½¿ç”¨éé˜»å¡ io æ¨¡å¼
 
 	rc = connect(sock, addr, len);
 	if (rc == -1) {
@@ -32,7 +36,7 @@ static int _connect(int sock, struct sockaddr *addr, int len, int timeout)
 			wait = 1;
 		}
 #else
-		if (errno == EAGAIN) {
+		if (errno == EINPROGRESS) {
 			wait = 1;
 		}
 #endif // os
@@ -83,7 +87,7 @@ static int _try_connect(const char *server, int port, int timeout)
 				sock = -1;
 			}
 			else {
-				// ³É¹¦
+				// æˆåŠŸ
 				break;
 			}
 		}
@@ -138,10 +142,10 @@ int simple_tcpclient_sendt(tcpclient_t *tc, const void *data, int len, int *sent
 retry:
 	rc = select(tc->sock+1, 0, &fd, 0, &tv);
 	if (rc == 0) {
-		return -2;	// ³¬Ê±
+		return -2;	// è¶…æ—¶
 	}
 	else if (rc == -1) {
-		return -1;	// ´íÎó
+		return -1;	// é”™è¯¯
 	}
 	else {
 		rc = send(tc->sock, (const char*)data, len, 0);
@@ -190,10 +194,10 @@ int simple_tcpclient_recvt(tcpclient_t *tc, void *buf, int len, int *recved, int
 retry:
 	rc = select(tc->sock+1, &fd, 0, 0, &tv);
 	if (rc == 0) {
-		return -2;	// ³¬Ê±
+		return -2;	// è¶…æ—¶
 	}
 	else if (rc == -1) {
-		return -1;	// ´íÎó
+		return -1;	// é”™è¯¯
 	}
 	else {
 		rc = recv(tc->sock, (char*)buf, len, 0);
@@ -220,7 +224,7 @@ retry:
 
 int simple_tcpclient_sendnt(tcpclient_t *tc, const void *data, int len, int *sent, int timeout)
 {
-	// FIXME£º³¬Ê±¼ÆËã²»¶Ô .
+	// FIXMEï¼šè¶…æ—¶è®¡ç®—ä¸å¯¹ .
 
 	const char *next = (const char*)data;
 	int rest = len;
@@ -246,7 +250,7 @@ int simple_tcpclient_sendnt(tcpclient_t *tc, const void *data, int len, int *sen
 
 int simple_tcpclient_recvnt(tcpclient_t *tc, void *buf, int len, int *recved, int timeout)
 {
-	// FIXME: ³¬Ê±¼ÆËã²»¶Ô
+	// FIXME: è¶…æ—¶è®¡ç®—ä¸å¯¹
 
 	char *next = (char *)buf;
 	int rest = len;

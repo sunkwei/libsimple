@@ -6,6 +6,8 @@
 #  include <WinSock2.h>
 #else
 #  include <unistd.h>
+#  include <sys/types.h>
+#  include <sys/socket.h>
    typedef int SOCKET;
 #  define closesocket close
 #endif // os
@@ -53,7 +55,7 @@ static int _file_set_write_buf(fd_t *fd, int len)
 
 static int _sock_eof(fd_t *fd)
 {
-	/** FIXME: Ó¦¸ÃÉèÖÃÎª·Ç×èÈûÄ£Ê½i */
+	/** FIXME: åº”è¯¥è®¾ç½®ä¸ºéžé˜»å¡žæ¨¡å¼i */
 	char c;
 	int rc = recv(fd->fd.sock, &c, 1, MSG_PEEK);
 	return rc == 0;
@@ -65,10 +67,10 @@ static int _sock_set_nonblock(fd_t *fd, int enable)
 	unsigned long mode = enable ? 1 : 0;
 	return ioctlsocket(fd->fd.sock, FIONBIO, &mode);
 #else
-	int flags = fcntl(fd, F_GETFL, 0);
+	int flags = fcntl(fd->fd.sock, F_GETFL, 0);
 	if (flags < 0) return -1;
 	flags = enable ? (flags | O_NONBLOCK) : (flags &~ O_NONBLOCK);
-	return fcntl(fd, F_SETFL, flags);
+	return fcntl(fd->fd.sock, F_SETFL, flags);
 #endif // os
 }
 

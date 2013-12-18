@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #ifdef WIN32
 #  include <WinSock2.h>
 #endif // os
@@ -13,7 +14,7 @@ int main()
 	WSAStartup(0x202, &data);
 #endif // os
 
-	tc = simple_tcpclient_open("172.16.1.10", 80, 5000);
+	tc = simple_tcpclient_open("www.baidu.com", 80, 5000);
 	if (tc) {
 		const char *req = 
 			"GET / HTTP/1.0\r\n"
@@ -42,6 +43,10 @@ int main()
 		}
 
 		simple_tcpclient_close(tc);
+	}
+	else {
+		fprintf(stderr, "create tcpclient err?\n");
+		return -1;
 	}
 
 	return 0;
