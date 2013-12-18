@@ -47,16 +47,18 @@ typedef struct HttpMessage HttpMessage;
 
 HttpMessage *httpc_Message_create ();
 void httpc_Message_release (HttpMessage *msg);
-void httpc_Message_setStartLine (HttpMessage *msg,
-		const char *p1, const char *p2, const char *p3);
+
+void httpc_Message_setStartLine (HttpMessage *msg, const char *p1, const char *p2, const char *p3);
 int httpc_Message_setValue (HttpMessage *msg, const char *key, const char *value);
 int httpc_Message_getValue (HttpMessage *msg, const char *key, const char **value);
 int httpc_Message_delValue (HttpMessage *msg, const char *key);
 int httpc_Message_appendBody (HttpMessage *msg, const char *body, int len);
 void httpc_Message_clearBody (HttpMessage *msg);
 int httpc_Message_getBody (HttpMessage *msg, const char **body);
-int httpc_Message_getLength (HttpMessage *msg);
+
+int httpc_Message_get_encode_length (HttpMessage *msg);
 void httpc_Message_encode (HttpMessage *msg, char *buf);
+
 enum HttpParserState httpc_Message_state (HttpMessage *msg);
 
 HttpMessage *httpc_parser_parse (HttpMessage *saved, 

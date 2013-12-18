@@ -147,15 +147,14 @@ void httpc_Message_clearBody (HttpMessage *msg)
 	}
 }
 
-int httpc_Message_getBody (HttpMessage *msg,
-		const char **data)
+int httpc_Message_getBody (HttpMessage *msg, const char **data)
 {
 	if (!msg) return -1;
 	*data = msg->body;
 	return msg->bodylen;
 }
 
-int httpc_Message_getLength (HttpMessage *msg)
+int httpc_Message_get_encode_length (HttpMessage *msg)
 {
 	int len = 0, i;
 	if (!msg || !msg->StartLine.p1 || !msg->StartLine.p2 || !msg->StartLine.p3) return -1;
