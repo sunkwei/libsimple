@@ -11,18 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D6012321-E47E-4701-8F3E-FC3DD886642F}</ProjectGuid>
+    <ProjectGuid>{D9392B15-5664-4B0E-AA2A-3BA1FB342648}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>libsimple</RootNamespace>
+    <RootNamespace>test_threadpool</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -49,13 +49,12 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBSIMPLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>export.def</ModuleDefinitionFile>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -66,40 +65,23 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBSIMPLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>export.def</ModuleDefinitionFile>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\simple\circ_buf.h" />
-    <ClInclude Include="include\simple\fd.h" />
-    <ClInclude Include="include\simple\list.h" />
-    <ClInclude Include="include\simple\mutex.h" />
-    <ClInclude Include="include\simple\semaphore.h" />
-    <ClInclude Include="include\simple\stream.h" />
-    <ClInclude Include="include\simple\thread.h" />
-    <ClInclude Include="include\simple\threadpool.h" />
-    <ClInclude Include="src\fd_impl.h" />
-    <ClInclude Include="src\stream_impl.h" />
+    <ClCompile Include="..\test_threadpool.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\circ_buf.c" />
-    <ClCompile Include="src\fd.c" />
-    <ClCompile Include="src\mutex.c" />
-    <ClCompile Include="src\semaphore.c" />
-    <ClCompile Include="src\stream.c" />
-    <ClCompile Include="src\thread.c" />
-    <ClCompile Include="src\threadpool.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="export.def" />
+    <ProjectReference Include="..\..\libsimple.vcxproj">
+      <Project>{d6012321-e47e-4701-8f3e-fc3dd886642f}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

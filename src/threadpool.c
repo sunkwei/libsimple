@@ -34,6 +34,7 @@ struct thread_pool_t
 
 static int _thread_cnt(int cnt)
 {
+	// TODO: 根据 cpu 数目
 	if (cnt <= 0)
 		return 4;
 	else
@@ -130,13 +131,21 @@ void simple_thread_pool_destroy(thread_pool_t *p)
 	free(p);
 }
 
+static void dump_list(list_head *head)
+{
+	list_head *pos;
+	list_for_each(pos, head) {
+		fprintf(stderr, "=== node=%p, prev=%p, next=%p ====\n", pos, pos->prev, pos->next);
+	}
+}
+
 int simple_thread_pool_add_task(thread_pool_t *p, task_t *t)
 {
 	list_head *n = (list_head*)malloc(sizeof(task_list));
 	((task_list*)n)->task = t;
 
 	simple_mutex_lock(p->lock);
-	list_add(n, &p->tasks);
+	list_add_tail(n, &p->tasks);
 	simple_mutex_unlock(p->lock);
 
 	simple_sem_post(p->sem);	// 通知有新的任务

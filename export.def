@@ -27,3 +27,12 @@ EXPORTS
 
 	simple_task_create
 	simple_task_destroy
+
+	simple_fd_open_from_socket
+	simple_fd_open_from_file
+	simple_fd_close
+
+	simple_stream_open
+	simple_stream_close
+	simple_stream_read
+	simple_stream_write
