@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_threadpool", "test\tes
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_tcpserver", "test\test_tcpserver\test_tcpserver.vcxproj", "{2A893363-3667-4824-B32E-D3722C01DFE6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_tcpclient", "test\test_tcpclient\test_tcpclient.vcxproj", "{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -25,6 +27,10 @@ Global
 		{2A893363-3667-4824-B32E-D3722C01DFE6}.Debug|Win32.Build.0 = Debug|Win32
 		{2A893363-3667-4824-B32E-D3722C01DFE6}.Release|Win32.ActiveCfg = Release|Win32
 		{2A893363-3667-4824-B32E-D3722C01DFE6}.Release|Win32.Build.0 = Release|Win32
+		{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}.Debug|Win32.Build.0 = Debug|Win32
+		{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}.Release|Win32.ActiveCfg = Release|Win32
+		{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -36,6 +36,21 @@ static int _file_eof(fd_t *fd)
 	return feof(fd->fd.fp);
 }
 
+static int _file_set_nonblock(fd_t *fd, int enable)
+{
+	return -1;
+}
+
+static int _file_set_read_buf(fd_t *fd, int len)
+{
+	return -1;
+}
+
+static int _file_set_write_buf(fd_t *fd, int len)
+{
+	return -1;
+}
+
 static int _sock_eof(fd_t *fd)
 {
 	/** FIXME: 应该设置为非阻塞模式i */
@@ -57,9 +72,14 @@ static int _sock_set_nonblock(fd_t *fd, int enable)
 #endif // os
 }
 
-static int _file_set_nonblock(fd_t *fd, int enable)
+static int _sock_set_read_buf(fd_t *fd, int len)
 {
-	return -1;
+	return setsockopt(fd->fd.sock, SOL_SOCKET, SO_RCVBUF, (const char*)&len, sizeof(len));
+}
+
+static int _sock_set_write_buf(fd_t *fd, int len)
+{
+	return setsockopt(fd->fd.sock, SOL_SOCKET, SO_SNDBUF, (const char*)&len, sizeof(len));
 }
 
 fd_t *simple_fd_open_from_file(FILE *fp)

@@ -41,3 +41,14 @@ EXPORTS
 	simple_tcpserver_close
 	simple_tcpserver_runonce
 	simple_tcpserver_run
+
+	simple_tcpclient_open
+	simple_tcpclient_close
+	simple_tcpclient_send
+	simple_tcpclient_sendt
+	simple_tcpclient_sendn
+	simple_tcpclient_sendnt
+	simple_tcpclient_recv
+	simple_tcpclient_recvt
+	simple_tcpclient_recvn
+	simple_tcpclient_recvnt
