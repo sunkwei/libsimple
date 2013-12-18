@@ -36,3 +36,8 @@ EXPORTS
 	simple_stream_close
 	simple_stream_read
 	simple_stream_write
+
+	simple_tcpserver_open
+	simple_tcpserver_close
+	simple_tcpserver_runonce
+	simple_tcpserver_run

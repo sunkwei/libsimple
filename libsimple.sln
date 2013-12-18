@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsimple", "libsimple.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_threadpool", "test\test_threadpool\test_threadpool.vcxproj", "{D9392B15-5664-4B0E-AA2A-3BA1FB342648}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_tcpserver", "test\test_tcpserver\test_tcpserver.vcxproj", "{2A893363-3667-4824-B32E-D3722C01DFE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{D9392B15-5664-4B0E-AA2A-3BA1FB342648}.Debug|Win32.Build.0 = Debug|Win32
 		{D9392B15-5664-4B0E-AA2A-3BA1FB342648}.Release|Win32.ActiveCfg = Release|Win32
 		{D9392B15-5664-4B0E-AA2A-3BA1FB342648}.Release|Win32.Build.0 = Release|Win32
+		{2A893363-3667-4824-B32E-D3722C01DFE6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2A893363-3667-4824-B32E-D3722C01DFE6}.Debug|Win32.Build.0 = Debug|Win32
+		{2A893363-3667-4824-B32E-D3722C01DFE6}.Release|Win32.ActiveCfg = Release|Win32
+		{2A893363-3667-4824-B32E-D3722C01DFE6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,8 @@
 #ifndef _simple_fd__hh
 #define _simple_fd__hh
 
+#include <stdio.h>
+
 /** 对应描述文件，socket，...
  */
 typedef struct fd_t fd_t;
