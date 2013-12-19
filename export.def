@@ -66,3 +66,6 @@ EXPORTS
 	httpc_Message_encode
 	httpc_Message_state
 	httpc_parser_parse
+
+	simple_url_parse
+	simple_url_release

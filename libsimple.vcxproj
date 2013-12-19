@@ -89,8 +89,10 @@
     <ClInclude Include="include\simple\tcpserver.h" />
     <ClInclude Include="include\simple\thread.h" />
     <ClInclude Include="include\simple\threadpool.h" />
+    <ClInclude Include="include\simple\url.h" />
     <ClInclude Include="src\fd_impl.h" />
     <ClInclude Include="src\httpc_impl.h" />
+    <ClInclude Include="src\regex.h" />
     <ClInclude Include="src\stream_impl.h" />
   </ItemGroup>
   <ItemGroup>
@@ -99,12 +101,14 @@
     <ClCompile Include="src\httpc.c" />
     <ClCompile Include="src\httpparser.c" />
     <ClCompile Include="src\mutex.c" />
+    <ClCompile Include="src\regex.c" />
     <ClCompile Include="src\semaphore.c" />
     <ClCompile Include="src\stream.c" />
     <ClCompile Include="src\tcpclient.c" />
     <ClCompile Include="src\tcpserver.c" />
     <ClCompile Include="src\thread.c" />
     <ClCompile Include="src\threadpool.c" />
+    <ClCompile Include="src\urlparser.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="export.def" />

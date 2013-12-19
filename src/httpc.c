@@ -183,7 +183,7 @@ int httpc_Message_get_encode_length (HttpMessage *msg)
 	/** body len */
 	len += msg->bodylen;
 
-	return len;
+	return len + 1;	// 呵呵，如果没有 body，可能需要 0 结束.
 }
 
 void httpc_Message_encode(HttpMessage *msg, char *buf)

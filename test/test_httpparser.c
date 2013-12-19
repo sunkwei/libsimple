@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include "../include/simple/httpparser.h"
+#include "../include/simple/url.h"
 
 int main()
 {
@@ -14,7 +15,7 @@ int main()
 		;
 
 	const char *str2 = 
-		"POST /action.html?act=doit&param=123&param2= HTTP/1.0\r\n"
+		"POST http://172.16.1.10:8000/action.html?act=doit&param=123&param2= HTTP/1.0\r\n"
 		"test : abcd\r\n"	// test lsw
 		" efg \r\n"
 		"Connection: close \r\n"
@@ -23,6 +24,7 @@ int main()
 	HttpMessage *msg = 0;
 	int used = 0;
 	char *encode_buf = 0;
+	url_t *url = 0;
 
 	msg = httpc_parser_parse(msg, str1, strlen(str1), &used);
 	assert(httpc_Message_state(msg) == HTTP_COMPLETE);
@@ -34,6 +36,11 @@ int main()
 	used = httpc_Message_get_encode_length(msg);
 	encode_buf = (char*)malloc(used);
 	httpc_Message_encode(msg, encode_buf);
+
+	url = simple_url_parse(msg->StartLine.p2);
+	if (url) {
+		simple_url_release(url);
+	}
 
 	httpc_Message_release(msg);
 
