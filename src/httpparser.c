@@ -2,27 +2,12 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include "../include/simple/httpparser.h"
+#include "httpc_impl.h"
 
 #define EXPSIZE 128
 
-#define safefree(x) {	\
-	if (x) free(x);	\
-	x = 0;		\
-}
 
-// private data for parser
-struct ParserData
-{
-	char *linedata;
-	int line_bufsize;
-	int line_datasize;
-
-	enum HttpParserState state, last_state;
-};
-typedef struct ParserData ParserData;
-
-void httpc_internal_releaseParserData (void *p)
+void httpc_internal_releaseParserData(void *p)
 {
 	ParserData *data = (ParserData *)p;
 	if (!p) return;
@@ -34,7 +19,7 @@ void httpc_internal_releaseParserData (void *p)
 	free(data);
 }
 
-static int isblank (int c)
+static int isblank(int c)
 {
 	if (c == ' ' || c == '\t')
 		return 1;
@@ -42,7 +27,7 @@ static int isblank (int c)
 		return 0;
 }
 
-static int isspace (int c)
+static int isspace(int c)
 {
 	if (isblank(c) || c == '\r' || c == '\n')
 		return 1;
@@ -50,7 +35,7 @@ static int isspace (int c)
 		return 0;
 }
 
-static void _append (char c, HttpMessage *msg)
+static void _append(char c, HttpMessage *msg)
 {
 	ParserData *pd = (ParserData *)msg->pri_data;
 	if (pd->line_datasize + 1 > pd->line_bufsize) {
@@ -60,7 +45,7 @@ static void _append (char c, HttpMessage *msg)
 	pd->linedata[pd->line_datasize++] = c;
 }
 
-static int _getmsglen (HttpMessage *msg)
+static int _getmsglen(HttpMessage *msg)
 {
 	const char *v = 0;
 	if (httpc_Message_getValue(msg, "Content-Length", &v)) {
@@ -71,7 +56,7 @@ static int _getmsglen (HttpMessage *msg)
 	}
 }
 
-static int parseStartLine (HttpMessage *msg)
+static int parseStartLine(HttpMessage *msg)
 {
 	ParserData *pd = (ParserData *)msg->pri_data;
 	const char *p = pd->linedata;
@@ -113,7 +98,7 @@ static int parseStartLine (HttpMessage *msg)
 	return 1;
 }
 
-static int parseHeaderLine (HttpMessage *msg)
+static int parseHeaderLine(HttpMessage *msg)
 {
 	// using ":" to split key and value£¬from msg->pri_data->linedata
 	ParserData *pd = (ParserData *)msg->pri_data;
@@ -155,7 +140,7 @@ static int parseHeaderLine (HttpMessage *msg)
 	return 1;
 }
 
-static int appendByte (char c, HttpMessage *msg)
+static int appendByte(char c, HttpMessage *msg)
 {
 	int ret = 1;
 	ParserData *pd = (ParserData *)msg->pri_data;
@@ -248,7 +233,7 @@ static int appendByte (char c, HttpMessage *msg)
 	return ret;
 }
 
-static int appendBody (const char *p, int len, HttpMessage *msg)
+static int appendBody(const char *p, int len, HttpMessage *msg)
 {
 	msg->body = (char *)realloc(msg->body, msg->bodylen+len);
 	memcpy(&msg->body[msg->bodylen], p, len);
@@ -262,7 +247,7 @@ static int appendBody (const char *p, int len, HttpMessage *msg)
 	return len;
 }
 
-HttpMessage *httpc_parser_parse (HttpMessage *saved, 
+HttpMessage *httpc_parser_parse(HttpMessage *saved, 
 		const char *data, int len, int *used)
 {
 	ParserData *pd;
@@ -309,7 +294,7 @@ HttpMessage *httpc_parser_parse (HttpMessage *saved,
 	return msg;
 }
 
-enum HttpParserState httpc_Message_state (HttpMessage *msg)
+HttpParserState httpc_Message_state(HttpMessage *msg)
 {
 	if (msg && msg->pri_data) {
 		ParserData *pd = (ParserData *)msg->pri_data;
@@ -318,4 +303,3 @@ enum HttpParserState httpc_Message_state (HttpMessage *msg)
 	else
 		return HTTP_UNKNOWN;
 }
-

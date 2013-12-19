@@ -52,3 +52,17 @@ EXPORTS
 	simple_tcpclient_recvt
 	simple_tcpclient_recvn
 	simple_tcpclient_recvnt
+
+	httpc_Message_create
+	httpc_Message_release
+	httpc_Message_setStartLine
+	httpc_Message_setValue
+	httpc_Message_getValue
+	httpc_Message_delValue
+	httpc_Message_appendBody
+	httpc_Message_clearBody
+	httpc_Message_getBody
+	httpc_Message_get_encode_length
+	httpc_Message_encode
+	httpc_Message_state
+	httpc_parser_parse

@@ -2,19 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "../include/simple/httpparser.h"
+#include "httpc_impl.h"
 
-#ifdef WIN32
-#define strcasecmp stricmp
-#define snprintf _snprintf
-#endif // win32
-
-#define safefree(x) {	\
-	if (x) free(x);	\
-	x = 0;		\
-}
-
-HttpMessage *httpc_Message_create ()
+HttpMessage *httpc_Message_create()
 {
 	HttpMessage *msg = (HttpMessage *)malloc(sizeof(HttpMessage));
 
@@ -24,7 +14,7 @@ HttpMessage *httpc_Message_create ()
 
 	msg->pri_data = 0;
 
-	msg->headers = 0;
+	list_init(&msg->headers);
 	msg->header_cnt = 0;
 
 	msg->body = 0;
@@ -33,31 +23,30 @@ HttpMessage *httpc_Message_create ()
 	return msg;
 }
 
-extern void httpc_internal_releaseParserData (void *pridata);
+extern void httpc_internal_releaseParserData(void *pridata);
 
 void httpc_Message_release (HttpMessage *msg)
 {
-	int i;
-	if (msg) {
-		safefree(msg->StartLine.p1);
-		safefree(msg->StartLine.p2);
-		safefree(msg->StartLine.p3);
+	list_head *pos, *n;
 
-		if (msg->headers) {
-			for (i = 0; i < msg->header_cnt; i++) {
-				safefree(msg->headers[i].key);
-				safefree(msg->headers[i].value);
-			}
-			safefree(msg->headers);
-		}
-		msg->header_cnt = 0;
+	safefree(msg->StartLine.p1);
+	safefree(msg->StartLine.p2);
+	safefree(msg->StartLine.p3);
 
-		safefree(msg->body);
-		msg->bodylen = 0;
-
-		httpc_internal_releaseParserData(msg->pri_data);
-		msg->pri_data = 0;
+	list_for_each_safe(pos, n, &msg->headers) {
+		HttpHeader *hh = (HttpHeader*)pos;
+		safefree(hh->key);
+		safefree(hh->value);
+		list_del(pos);
+		free(hh);
 	}
+	msg->header_cnt = 0;
+
+	safefree(msg->body);
+	msg->bodylen = 0;
+
+	httpc_internal_releaseParserData(msg->pri_data);
+	msg->pri_data = 0;
 	free(msg);
 }
 
@@ -76,25 +65,23 @@ void httpc_Message_setStartLine (HttpMessage *msg,
 	}
 }
 
+static list_head *_make_kvpair(const char *key, const char *value)
+{
+	HttpHeader *h = (HttpHeader*)malloc(sizeof(HttpHeader));
+	h->key = strdup(key);
+	h->value = strdup(value);
+
+	return (list_head*)h;
+}
+
 int httpc_Message_setValue (HttpMessage *msg,
 		const char *key, const char *value)
 {
-	int i;
-	if (!msg || !key || !value) return -1;
-	for (i = 0; i < msg->header_cnt; i++) {
-		if (!strcasecmp(key, msg->headers[i].key)) {
-			safefree(msg->headers[i].value);
-			msg->headers[i].value = strdup(value);
+	list_head *newkv = 0;
 
-			return 1;
-		}
-	}
-
-	msg->headers = (HttpHeader *)realloc(msg->headers,
-			(msg->header_cnt+1) * sizeof(HttpHeader));
-	msg->headers[msg->header_cnt].key = strdup(key);
-	msg->headers[msg->header_cnt].value = strdup(value);
-
+	/** FIXME: 这里直接新建一个 kv 对，但有可能不允许多值？？ */
+	newkv = _make_kvpair(key, value);
+	list_add(newkv, &msg->headers);
 	msg->header_cnt++;
 
 	return 0;
@@ -103,11 +90,14 @@ int httpc_Message_setValue (HttpMessage *msg,
 int httpc_Message_getValue (HttpMessage *msg,
 		const char *key, const char **value)
 {
-	int i;
-	if (!msg || !key) return -1;
-	for (i = 0; i < msg->header_cnt; i++) {
-		if (!strcasecmp(key, msg->headers[i].key)) {
-			*value = msg->headers[i].value;
+	list_head *pos;
+
+	*value = 0;
+
+	list_for_each(pos, &msg->headers) {
+		HttpHeader *h = (HttpHeader*)pos;
+		if (!strcasecmp(h->key, key)) {
+			*value = h->value;
 			return 1;
 		}
 	}
@@ -115,12 +105,24 @@ int httpc_Message_getValue (HttpMessage *msg,
 	return 0;
 }
 
-int httpc_Message_delValue (HttpMessage *msg,
-		const char *key)
+int httpc_Message_delValue (HttpMessage *msg, const char *key)
 {
-	// TODO: 优化的处理管理内存
-	assert(0);
-	return -1;
+	/** FIXME: 删除所有匹配的 !!! */
+	list_head *pos, *n;
+
+	list_for_each_safe(pos, n, &msg->headers) {
+		HttpHeader *h = (HttpHeader*)pos;
+		if (!strcasecmp(h->key, key)) {
+			safefree(h->key);
+			safefree(h->value);
+
+			list_del(pos);
+
+			free(h);
+		}
+	}
+
+	return 0;
 }
 
 int httpc_Message_appendBody (HttpMessage *msg,
@@ -156,59 +158,51 @@ int httpc_Message_getBody (HttpMessage *msg, const char **data)
 
 int httpc_Message_get_encode_length (HttpMessage *msg)
 {
-	int len = 0, i;
+	int len = 0;
+	list_head *pos;
+
 	if (!msg || !msg->StartLine.p1 || !msg->StartLine.p2 || !msg->StartLine.p3) return -1;
 
+	/** start line */
 	len += strlen(msg->StartLine.p1) + 1; // ' '
 	len += strlen(msg->StartLine.p2) + 1; // ' '
 	len += strlen(msg->StartLine.p3);
 	len += 2;	// \r\n
 
-	for (i = 0; i < msg->header_cnt; i++) {
-		len += strlen(msg->headers[i].key) + 2; // ": "
-		len += strlen(msg->headers[i].value);
+	/** 所有 headers 占用空间 */
+	list_for_each(pos, &msg->headers) {
+		HttpHeader *h = (HttpHeader*)pos;
+		len += strlen(h->key) + 2;	// ': '
+		len += strlen(h->value);
 		len += 2;	// \r\n
 	}
 
+	/** 空行 */
 	len += 2;	// \r\n
+
+	/** body len */
 	len += msg->bodylen;
 
 	return len;
 }
 
-void httpc_Message_encode (HttpMessage *msg, char *buf)
+void httpc_Message_encode(HttpMessage *msg, char *buf)
 {
-	int i;
-	if (msg) {
-		char *p = buf;
+	char *p = buf;
+	list_head *pos;
 
-		strcpy(p, msg->StartLine.p1);
-		p += strlen(msg->StartLine.p1);
-		strcpy(p, " ");
-		p += 1;
-		strcpy(p, msg->StartLine.p2);
-		p += strlen(msg->StartLine.p2);
-		strcpy(p, " ");
-		p += 1;
-		strcpy(p, msg->StartLine.p3);
-		p += strlen(msg->StartLine.p3);
-		strcpy(p, "\r\n");
-		p += 2;
+	/** start line */
+	p += sprintf(p, "%s %s %s\r\n", msg->StartLine.p1, msg->StartLine.p2, msg->StartLine.p3);
 
-		for (i = 0; i < msg->header_cnt; i++) {
-			strcpy(p, msg->headers[i].key);
-			p += strlen(msg->headers[i].key);
-			strcpy(p, ": ");
-			p += 2;
-			strcpy(p, msg->headers[i].value);
-			p += strlen(msg->headers[i].value);
-			strcpy(p, "\r\n");
-			p += 2;
-		}
-
-		strcpy(p, "\r\n");
-		p += 2;
-
-		memcpy(p, msg->body, msg->bodylen);
+	/** all headers */
+	list_for_each(pos, &msg->headers) {
+		HttpHeader *h = (HttpHeader*)pos;
+		p += sprintf(p, "%s: %s\r\n", h->key, h->value);
 	}
+
+	/** 空行 */
+	strcpy(p, "\r\n");
+	p += 2;
+
+	memcpy(p, msg->body, msg->bodylen);
 }
