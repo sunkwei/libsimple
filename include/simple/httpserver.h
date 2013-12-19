@@ -17,7 +17,7 @@ typedef struct httpserver_callbacks
 
 } httpserver_callbacks;
 
-httpserver_t *simple_httpserver_open(int port, const httpserver_callbacks, const char *bindip);
+httpserver_t *simple_httpserver_open(int port, const httpserver_callbacks *cbs, const char *bindip);
 void simple_httpserver_close(httpserver_t *hs);
 
 void simple_httpserver_runonce(httpserver_t *hs);

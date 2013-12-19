@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <fcntl.h>
+#include <errno.h>
 #ifdef WIN32
 #  include <WinSock2.h>
 #else
