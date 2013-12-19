@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "../include/simple/tcpserver.h"
 
-static int cb_open(void **opaque, const struct sockaddr *from, socklen_t len)
+static int cb_open(tcpserver_t *ts, void **opaque, const struct sockaddr *from, socklen_t len)
 {
 	if (from->sa_family == AF_INET) {
 		struct sockaddr_in *in = (struct sockaddr_in*)from;
@@ -13,7 +13,7 @@ static int cb_open(void **opaque, const struct sockaddr *from, socklen_t len)
 	return 0;
 }
 
-static void cb_read(void *opaque, stream_t *s)
+static void cb_read(tcpserver_t *ts, void *opaque, stream_t *s)
 {
 	char buf[16];
 	int rc = simple_stream_read(s, buf, sizeof(buf)-1);
@@ -28,7 +28,7 @@ static void cb_read(void *opaque, stream_t *s)
 	}
 }
 
-static void cb_close(void *opaque)
+static void cb_close(tcpserver_t *ts, void *opaque)
 {
 	fprintf(stderr, "%s: called!\n", __FUNCTION__);
 }
@@ -39,6 +39,7 @@ static int _quit = 0;
 static int WINAPI ctrl_c_handle(DWORD code)
 {
 	_quit = 1;
+	return 0;
 }
 #else
 #endif // os

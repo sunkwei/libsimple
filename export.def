@@ -41,6 +41,7 @@ EXPORTS
 	simple_tcpserver_close
 	simple_tcpserver_runonce
 	simple_tcpserver_run
+	simple_tcpserver_enable_write_callback
 
 	simple_tcpclient_open
 	simple_tcpclient_close
@@ -69,3 +70,10 @@ EXPORTS
 
 	simple_url_parse
 	simple_url_release
+
+	simple_httpserver_open
+	simple_httpserver_close
+	simple_httpserver_read_body
+	simple_httpserver_write_body
+	simple_httpserver_runonce
+	simple_httpserver_run

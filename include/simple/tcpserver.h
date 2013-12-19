@@ -18,7 +18,6 @@ typedef int socklen_t;
 typedef struct tcpserver_t tcpserver_t;
 
 /** tcp server 可能的回调，
-		如果设置0，将不会回调该功能.
  */
 typedef struct tcpserver_callbacks
 {
@@ -26,7 +25,7 @@ typedef struct tcpserver_callbacks
 			@param opaque: 此时调用者可以保存一个自己定义的指针，在 cb_read/cb_write 时，将交给调用者.
 			@warning: 如果不设置该功能，链接将直接被关闭.
 	 */
-	int (*cb_open)(void **opaque, const struct sockaddr *addrfrom, socklen_t addrlen);
+	int (*cb_open)(tcpserver_t *ts, void **opaque, const struct sockaddr *addrfrom, socklen_t addrlen);
 	
 	/** 当有数据需要读取时调用 
 			一般通过：
@@ -34,24 +33,30 @@ typedef struct tcpserver_callbacks
 				int rc = simple_stream_read(s, buf, sizeof(buf));
 				...
 	 */
-	void (*cb_read)(void *opaque, stream_t *s);
+	void (*cb_read)(tcpserver_t *ts, void *opaque, stream_t *s);
 
 	/** 当写缓冲可用时调用 
 			一般通过：
 				int rc = simple_stream_write(s, data, datalen);
 				...
 	 */
-	void (*cb_write)(void *opaque, stream_t *s);
+	void (*cb_write)(tcpserver_t *ts, void *opaque, stream_t *s);
 
 	/** 当对方关闭连接时调用.
 			只是作为通知.
 	 */
-	void (*cb_close)(void *opaque);
+	void (*cb_close)(tcpserver_t *ts, void *opaque);
 
 } tcpserver_callbacks;
 
 tcpserver_t *simple_tcpserver_open(int port, const tcpserver_callbacks *cbs, const char *bindip);
 void simple_tcpserver_close(tcpserver_t *s);
+
+/** 启用/禁用 cb_write() 回调
+	一般在执行 simple_stream_write() 返回时 EAGAIN 时，启用，
+	simple_stream_write() 成功后，禁用
+ */
+int simple_tcpserver_enable_write_callback(tcpserver_t *ts, stream_t *s, int enable);
 
 /** 调用者负责驱动 select
     一般启动一个工作线程

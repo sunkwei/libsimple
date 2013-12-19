@@ -20,12 +20,26 @@ void simple_stream_close(stream_t *s)
 	free(s);
 }
 
-int simple_stream_read(stream_t *s, void *buf, int bufsize)
+int simple_stream_read(stream_t *s, void *buf, int bufsize, int *bytes)
 {
-	return s->fd->read(s->fd, buf, bufsize);
+	int rc = s->fd->read(s->fd, buf, bufsize);
+	if (rc > 0) {
+		*bytes = rc;
+		return 0;
+	}
+	else {
+		return s->fd->lasterr(s->fd);
+	}
 }
 
-int simple_stream_write(stream_t *s, const void *data, int datalen)
+int simple_stream_write(stream_t *s, const void *data, int datalen, int *bytes)
 {
-	return s->fd->write(s->fd, data, datalen);
+	int rc = s->fd->write(s->fd, data, datalen);
+	if (rc > 0) {
+		*bytes = rc;
+		return 0;
+	}
+	else {
+		return s->fd->lasterr(s->fd);
+	}
 }

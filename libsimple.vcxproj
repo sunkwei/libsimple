@@ -78,9 +78,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\simple\async_io.h" />
     <ClInclude Include="include\simple\circ_buf.h" />
     <ClInclude Include="include\simple\fd.h" />
     <ClInclude Include="include\simple\httpparser.h" />
+    <ClInclude Include="include\simple\httpserver.h" />
     <ClInclude Include="include\simple\list.h" />
     <ClInclude Include="include\simple\mutex.h" />
     <ClInclude Include="include\simple\semaphore.h" />
@@ -100,6 +102,7 @@
     <ClCompile Include="src\fd.c" />
     <ClCompile Include="src\httpc.c" />
     <ClCompile Include="src\httpparser.c" />
+    <ClCompile Include="src\httpserver.c" />
     <ClCompile Include="src\mutex.c" />
     <ClCompile Include="src\regex.c" />
     <ClCompile Include="src\semaphore.c" />
