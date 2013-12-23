@@ -5,6 +5,7 @@
 #  include <Windows.h>
 #else
 #  include <semaphore.h>
+#  include <time.h>
 #endif // os
 #include "../include/simple/semaphore.h"
 
@@ -53,5 +54,33 @@ void simple_sem_wait(semaphore_t *s)
 	WaitForSingleObject(s->sem, -1);
 #else
 	sem_wait(&s->sem);
+#endif // os
+}
+
+int simple_sem_wait_timeout(semaphore_t *s, int timeout_ms)
+{
+#ifdef WIN32
+	if (WaitForSingleObject(s->sem, timeout_ms) == WAIT_OBJECT_0)
+		return 0;
+	else
+		return -1;
+#else
+	struct timespec ts;
+	int rc;
+
+	clock_gettime(CLOCK_REALTIME, &ts);
+	ts.tv_sec += timeout_ms / 1000;
+	ts.tv_nsec += (timeout_ms%1000)*1000000;
+	if (ts.tv_nsec > 1000000000) {
+		ts.tv_nsec -= 1000000000;
+		ts.tv_sec++;
+	}
+
+	rc = sem_timedwait(s->sem, &ts);
+	if (rc == -1)
+		return -1;
+	else
+		return 0;
+
 #endif // os
 }

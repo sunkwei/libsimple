@@ -16,12 +16,13 @@ static int cb_open(tcpserver_t *ts, void **opaque, const struct sockaddr *from, 
 static void cb_read(tcpserver_t *ts, void *opaque, stream_t *s)
 {
 	char buf[16];
-	int rc = simple_stream_read(s, buf, sizeof(buf)-1);
-	if (rc > 0) {
+	int bytes;
+	int rc = simple_stream_read(s, buf, sizeof(buf)-1, &bytes);
+	if (rc == 0) {
 		buf[rc] = 0;
 		fprintf(stderr, "%s: recv: %s\n", __FUNCTION__, buf);
 
-		simple_stream_write(s, buf, rc);
+		simple_stream_write(s, buf, rc, &bytes);
 	}
 	else {
 		fprintf(stderr, "%s: read err?\n", __FUNCTION__);

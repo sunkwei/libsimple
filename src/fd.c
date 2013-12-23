@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <fcntl.h>
+#include <string.h>
+#include <errno.h>
 #ifdef WIN32
 #  include <WinSock2.h>
 #else
@@ -141,7 +143,67 @@ fd_t *simple_fd_open_from_socket(int sock)
 	return fd;
 }
 
+void simple_fd_detach(fd_t *fd)
+{
+	if (fd->type == TYPE_SOCKET)
+		fd->fd.sock = -1;
+	else
+		fd->fd.fp = 0;
+}
+
 void simple_fd_close(fd_t *fd)
 {
+	if (fd->type == TYPE_SOCKET) {
+		if (fd->fd.sock != -1) {
+#ifdef WIN32
+			closesocket(fd->fd.sock);
+#else
+			close(fd->fd.sock);
+#endif // os
+		}
+	}
+	else {
+		if (fd->fd.fp) {
+			fclose(fd->fd.fp);
+		}
+	}
 	free(fd);
+}
+
+int simple_fd_lasterr(fd_t *fd)
+{
+	return fd->lasterr(fd);
+}
+
+typedef struct winsock_err_desc
+{
+	int code;
+	const char *str;
+} winsock_err_desc;
+
+const winsock_err_desc _winsock_err_table[] = {
+	{ 10038, "winsock NOT inited!" },
+	{ -1, 0 },
+};
+
+const char *simple_fd_lasterr_string(fd_t *fd, int err)
+{
+#ifdef WIN32
+	if (fd->type == TYPE_SOCKET) {
+		const winsock_err_desc *desc = &_winsock_err_table[0];
+		while (desc->code != -1) {
+			if (desc->code == err)
+				return desc->str;
+
+			desc++;
+		}
+
+		return 0;
+	}
+	else {
+		return strerror(err);
+	}
+#else
+	return strerror(err);
+#endif // os
 }

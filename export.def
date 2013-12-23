@@ -15,11 +15,16 @@ EXPORTS
 	simple_sem_destroy
 	simple_sem_post
 	simple_sem_wait
+	simple_sem_wait_timeout
 
 	simple_thread_create
 	simple_thread_join
 	simple_thread_msleep
 	simple_thread_id
+	simple_thread_req
+	simple_thread_chkreq
+	simple_thread_getreq
+	simple_thread_reply
 
 	simple_thread_pool_create
 	simple_thread_pool_destroy
@@ -30,18 +35,10 @@ EXPORTS
 
 	simple_fd_open_from_socket
 	simple_fd_open_from_file
+	simple_fd_detach
 	simple_fd_close
-
-	simple_stream_open
-	simple_stream_close
-	simple_stream_read
-	simple_stream_write
-
-	simple_tcpserver_open
-	simple_tcpserver_close
-	simple_tcpserver_runonce
-	simple_tcpserver_run
-	simple_tcpserver_enable_write_callback
+	simple_fd_lasterr
+	simple_fd_lasterr_string
 
 	simple_tcpclient_open
 	simple_tcpclient_close
@@ -70,10 +67,3 @@ EXPORTS
 
 	simple_url_parse
 	simple_url_release
-
-	simple_httpserver_open
-	simple_httpserver_close
-	simple_httpserver_read_body
-	simple_httpserver_write_body
-	simple_httpserver_runonce
-	simple_httpserver_run

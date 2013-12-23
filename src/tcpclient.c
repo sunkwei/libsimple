@@ -114,7 +114,6 @@ tcpclient_t *simple_tcpclient_open(const char *server, int port, int timeout)
 void simple_tcpclient_close(tcpclient_t *tc)
 {
 	simple_fd_close(tc->fd);
-	closesocket(tc->sock);
 	free(tc);
 }
 
