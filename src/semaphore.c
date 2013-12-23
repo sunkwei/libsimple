@@ -76,7 +76,7 @@ int simple_sem_wait_timeout(semaphore_t *s, int timeout_ms)
 		ts.tv_sec++;
 	}
 
-	rc = sem_timedwait(s->sem, &ts);
+	rc = sem_timedwait(&s->sem, &ts);
 	if (rc == -1)
 		return -1;
 	else

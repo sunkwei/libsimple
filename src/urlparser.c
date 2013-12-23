@@ -5,7 +5,7 @@
 #include "../include/simple/url.h"
 #include "httpc_impl.h"
 
-static char *strndup (const char *s, int n)
+static char *my_strndup (const char *s, int n)
 {
 	if (n > 0) {
 		char *rs = (char*)malloc(n+4);
@@ -71,7 +71,7 @@ static key_value_t *_parse_kv(char *p)
 	}
 	else {
 		key_value_t *kv = (key_value_t*)malloc(sizeof(key_value_t));
-		kv->key = strndup(p, (pos-p));
+		kv->key = my_strndup(p, (pos-p));
 		kv->value = strdup(pos+1);
 
 		return kv;
@@ -114,12 +114,12 @@ url_t *simple_url_parse(const char *str)
 	rc = regexec(&_reg_url, str, 10, subs, 0);
 	if (rc == 0) {
 		url_t *url = (url_t*)malloc(sizeof(url_t));
-		char *authority = strndup(str + subs[4].rm_so, subs[4].rm_eo - subs[4].rm_so);
+		char *authority = my_strndup(str + subs[4].rm_so, subs[4].rm_eo - subs[4].rm_so);
 
-		url->schema = strndup(str + subs[2].rm_so, subs[2].rm_eo - subs[2].rm_so);
-		url->path = strndup(str + subs[5].rm_so, subs[5].rm_eo-subs[5].rm_so);
-		url->query = strndup(str + subs[7].rm_so, subs[7].rm_eo-subs[7].rm_so);
-		url->fragment = strndup(str + subs[9].rm_so, subs[9].rm_eo-subs[9].rm_so);
+		url->schema = my_strndup(str + subs[2].rm_so, subs[2].rm_eo - subs[2].rm_so);
+		url->path = my_strndup(str + subs[5].rm_so, subs[5].rm_eo-subs[5].rm_so);
+		url->query = my_strndup(str + subs[7].rm_so, subs[7].rm_eo-subs[7].rm_so);
+		url->fragment = my_strndup(str + subs[9].rm_so, subs[9].rm_eo-subs[9].rm_so);
 
 		list_init(&url->query_pairs);
 
@@ -127,13 +127,13 @@ url_t *simple_url_parse(const char *str)
 
 		rc = regexec(&_reg_auth, authority, 10, subs, 0);
 		if (rc == 0) {
-			url->username = strndup(authority + subs[2].rm_so, subs[2].rm_eo - subs[2].rm_so);
-			url->passwd = strndup(authority + subs[3].rm_so, subs[3].rm_eo - subs[3].rm_so);
-			url->host = strndup(authority + subs[4].rm_so, subs[4].rm_eo - subs[4].rm_so);
+			url->username = my_strndup(authority + subs[2].rm_so, subs[2].rm_eo - subs[2].rm_so);
+			url->passwd = my_strndup(authority + subs[3].rm_so, subs[3].rm_eo - subs[3].rm_so);
+			url->host = my_strndup(authority + subs[4].rm_so, subs[4].rm_eo - subs[4].rm_so);
 			if (subs[6].rm_so == -1)
 				url->port = strdup("80");
 			else
-				url->port = strndup(authority + subs[6].rm_so, subs[6].rm_eo - subs[6].rm_so);
+				url->port = my_strndup(authority + subs[6].rm_so, subs[6].rm_eo - subs[6].rm_so);
 		}
 		else {
 			url->username = strdup("");
