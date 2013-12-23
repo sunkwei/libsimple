@@ -24,5 +24,7 @@ AC_CHECK_HEADERS([malloc.h memory.h stdlib.h])
 AC_FUNC_MALLOC
 
 AC_OUTPUT( [src/Makefile
-	   test/Makefile]
+	   test/Makefile
+	   httpsrv/Makefile
+	   ]
 	 )
