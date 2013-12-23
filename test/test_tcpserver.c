@@ -19,10 +19,17 @@ static void cb_read(tcpserver_t *ts, void *opaque, stream_t *s)
 	int bytes;
 	int rc = simple_stream_read(s, buf, sizeof(buf)-1, &bytes);
 	if (rc == 0) {
+<<<<<<< HEAD
 		buf[rc] = 0;
 		fprintf(stderr, "%s: recv: %s\n", __FUNCTION__, buf);
 
 		simple_stream_write(s, buf, rc, &bytes);
+=======
+		buf[bytes] = 0;
+		fprintf(stderr, "%s: recv: %s\n", __FUNCTION__, buf);
+
+		simple_stream_write(s, buf, bytes, &bytes);
+>>>>>>> 1b0e66d55604e9dc42a4a5ea24d8dbfdd27bb148
 	}
 	else {
 		fprintf(stderr, "%s: read err?\n", __FUNCTION__);
