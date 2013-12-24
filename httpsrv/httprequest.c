@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
-#include <direct.h>
 #ifdef WIN32
 #  include <WinSock2.h>
+#  include <direct.h>
 #else
+#  include <unistd.h>
+#  define _snprintf snprintf
 #endif // os
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -15,27 +17,27 @@
 #  define strcasecmp stricmp
 #endif // os
 
-/** ·µ»Ø root path£¬Ò»°ãÓ¦¸ÃÍ¨¹ıÅäÖÃ·½Ê½. */
+/** è¿”å› root pathï¼Œä¸€èˆ¬åº”è¯¥é€šè¿‡é…ç½®æ–¹å¼. */
 static const char *root_path()
 {
 	static char curr[1024];
 	getcwd(curr, sizeof(curr));
 
-	return curr;	// Ê¹ÓÃµ±Ç°Ä¿Â¼.
+	return curr;	// ä½¿ç”¨å½“å‰ç›®å½•.
 }
 
-/** Ê¹ÓÃroot + path ×÷ÎªÎÄ¼ş¼ì²é */
+/** ä½¿ç”¨root + path ä½œä¸ºæ–‡ä»¶æ£€æŸ¥ */
 static int is_local_file(const char *filename)
 {
 	struct stat buf;
 	if (stat(filename, &buf) == 0) {
 		if (buf.st_mode & S_IFDIR) {
-			// Ä¿Â¼£¬²»×ö´¦Àí.
+			// ç›®å½•ï¼Œä¸åšå¤„ç†.
 			return 0;
 		}
 
 		if (buf.st_mode & S_IFMT) {
-			// ÎÄ¼ş.
+			// æ–‡ä»¶.
 			return 1;
 		}
 	}
@@ -51,6 +53,9 @@ typedef struct ext_content_type
 static ext_content_type _types[] = 
 {
 	{ ".txt", "text/plain" },
+	{ ".c", "text/plain" },
+	{ ".h", "text/plain" },
+	{ ".cpp", "text/plain" },
 	{ ".html", "text/html" },
 	{ ".htm", "text/html" },
 	{ ".ico", "image/x-icon" },
@@ -65,7 +70,7 @@ static ext_content_type _types[] =
 	{ ".png", "image/png" },
 	{ ".gz", "application/x-gzip" },
 	{ ".ppt", "application/mspowerpoint" },
-	// .... ¿ÉÒÔÌí¼ÓºÜ¶àºÜ¶à ...
+	// .... å¯ä»¥æ·»åŠ å¾ˆå¤šå¾ˆå¤š ...
 	{ 0, 0 },
 };
 
@@ -99,10 +104,10 @@ static int send_data(int sock, const char *data, int len)
 	return 0;
 }
 
-/** ·¢ËÍ±¾µØÎÄ¼ş */
+/** å‘é€æœ¬åœ°æ–‡ä»¶ */
 static int send_local_file(client *c, HttpMessage *res, const char *filename, url_t *url)
 {
-	/** ¸ù¾İÎÄ¼şÀ©Õ¹Ãû£¬¾ö¶¨ Content-Type ÀàĞÍ. */
+	/** æ ¹æ®æ–‡ä»¶æ‰©å±•åï¼Œå†³å®š Content-Type ç±»å‹. */
 	const char *ext = strrchr(filename, '.');
 	struct stat st;
 	char vbuf[64];
@@ -117,8 +122,8 @@ static int send_local_file(client *c, HttpMessage *res, const char *filename, ur
 	httpc_Message_setValue(res, "Content-Type", get_context_type_from_ext(ext));
 	httpc_Message_setValue(res, "Content-Length", vbuf);
 
-	alen = httpc_Message_get_encode_length(res, 0);	// ²»°üº¬body ³¤¶È
-	abuf = (char*)alloca(alen+1);	// Ê¹ÓÃÕ»·ÖÅä ...
+	alen = httpc_Message_get_encode_length(res, 0);	// ä¸åŒ…å«body é•¿åº¦
+	abuf = (char*)alloca(alen+1);	// ä½¿ç”¨æ ˆåˆ†é… ...
 	httpc_Message_encode(res, abuf, 0);
 
 	if (send_data(c->sock, abuf, alen) < 0) {
@@ -132,7 +137,7 @@ static int send_local_file(client *c, HttpMessage *res, const char *filename, ur
 		return -1;
 	}
 
-	err = 0;
+	err = 1;
 	while (!feof(fp)) {
 		char buf[4096];
 		int rc = fread(buf, 1, sizeof(buf), fp);
@@ -158,14 +163,14 @@ static int ret_404(client *c, HttpMessage *res, const char *path)
 
 	httpc_Message_setStartLine(res, "HTTP/1.0", "404", "File Not Found");
 	httpc_Message_setValue(res, "Content-Type", "text/plain");
-	httpc_Message_appendBody(res, body, strlen(body)+1);	// strlen + 1 µÄÄ¿µÄ±£Ö¤·¢ËÍ 0½áÊø.
+	httpc_Message_appendBody(res, body, strlen(body)+1);	// strlen + 1 çš„ç›®çš„ä¿è¯å‘é€ 0ç»“æŸ.
 
 	return 0;
 }
 
 static void build_filename(char *buf, int size, const char *root, const char *path)
 {
-	// FIXME: ÕâÀïÓ¦¸Ã½âÎö path ÖĞ¿ÉÄÜµÄ %xx%xx ...
+	// FIXME: è¿™é‡Œåº”è¯¥è§£æ path ä¸­å¯èƒ½çš„ %xx%xx ...
 
 	strcat(buf, root);
 #ifdef WIN32
@@ -182,8 +187,8 @@ static void build_filename(char *buf, int size, const char *root, const char *pa
 #endif // os
 }
 
-/** Ò»¸öµäĞÍµÄ http server£¬ĞèÒªÖ§³Ö http authentication£¬Ò»°ãÍ¨¹ı¼ì²é req ÖĞµÄ WWW-Authorization ×Ö¶Î ...
-    ÕâÀïºöÂÔ´ËÀà¼ì²é.
+/** ä¸€ä¸ªå…¸å‹çš„ http serverï¼Œéœ€è¦æ”¯æŒ http authenticationï¼Œä¸€èˆ¬é€šè¿‡æ£€æŸ¥ req ä¸­çš„ WWW-Authorization å­—æ®µ ...
+    è¿™é‡Œå¿½ç•¥æ­¤ç±»æ£€æŸ¥.
  */
 int http_request(client *c, url_t *url, const HttpMessage *req, HttpMessage *res)
 {
@@ -192,14 +197,14 @@ int http_request(client *c, url_t *url, const HttpMessage *req, HttpMessage *res
 
 	build_filename(filename, 1024, root_path(), url->path);
 
-	/** step1 ¼ì²é path ÊÇ·ñÆ¥Åä±¾µØÎÄ¼ş?
+	/** step1 æ£€æŸ¥ path æ˜¯å¦åŒ¹é…æœ¬åœ°æ–‡ä»¶?
 	 */
 	if (is_local_file(filename)) {
 		return send_local_file(c, res, filename, url);
 	}
 
-	/** step2 ´ËÊ±ÕÒ²»µ½Æ¥ÅäµÄÎÄ¼ş£¬¿ÉÒÔÖ´ĞĞÒ»Ğ©ÌØ¶¨µÄ²Ù×÷ */
+	/** step2 æ­¤æ—¶æ‰¾ä¸åˆ°åŒ¹é…çš„æ–‡ä»¶ï¼Œå¯ä»¥æ‰§è¡Œä¸€äº›ç‰¹å®šçš„æ“ä½œ */
 	
-	/** step3 ·µ»Ø 404 */
+	/** step3 è¿”å› 404 */
 	return ret_404(c, res, filename);
 }
