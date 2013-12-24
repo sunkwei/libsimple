@@ -62,9 +62,9 @@ void httpc_Message_clearBody(HttpMessage *msg);
 int httpc_Message_getBody(HttpMessage *msg, const char **body);
 
 /** 返回需要 encode 的字节长度 */
-int httpc_Message_get_encode_length(HttpMessage *msg);
+int httpc_Message_get_encode_length(HttpMessage *msg, int with_body);
 /** buf 长度至少 httpc_Message_get_encode_length() */
-void httpc_Message_encode(HttpMessage *msg, char *buf);
+void httpc_Message_encode(HttpMessage *msg, char *buf, int with_body);
 
 /** 返回解析状态 */
 HttpParserState httpc_Message_state(HttpMessage *msg);

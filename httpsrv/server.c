@@ -8,10 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
-#include <../include/simple/threadpool.h>
+#include "../include/simple/threadpool.h"
 
 #ifdef WIN32
 #  include <winsock2.h>
+typedef int socklen_t;
 #else
 #  include <errno.h>
 #  include <unistd.h>
@@ -41,7 +42,7 @@ int main(int argc, char **argv)
 	socklen_t addrlen = sizeof(addr);
 	int port = 8100;	// port
 	const char *local = "0.0.0.0";
-	int quit = 0;	// 结束
+	int quit = 0;	// 结束.  
 
 #ifdef WIN32
 	WSADATA data;
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
 		}
 		else {
 			// accept success, and build a client into thread pool
-			client *c = build_client(sock);
+			client *c = build_client(sock_client);
 			task_t *t = simple_task_create(c->handle, c);
 
 			fprintf(stdout, "INFO: connect from %s:%d\n",

@@ -33,9 +33,9 @@ int main()
 	msg = httpc_parser_parse(0, str2, strlen(str2), &used);
 	assert(httpc_Message_state(msg) == HTTP_COMPLETE);
 
-	used = httpc_Message_get_encode_length(msg);
+	used = httpc_Message_get_encode_length(msg, 1);
 	encode_buf = (char*)malloc(used);
-	httpc_Message_encode(msg, encode_buf);
+	httpc_Message_encode(msg, encode_buf, 1);
 
 	url = simple_url_parse(msg->StartLine.p2);
 	if (url) {

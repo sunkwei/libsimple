@@ -24,24 +24,24 @@ typedef struct task_list
 
 struct thread_pool_t
 {
-	list_head threads;		// 所有工作线程
-	list_head tasks;		// 任务队列
-	mutex_t *lock;			// 任务队列锁
-	semaphore_t *sem;		// 当添加任务时，唤醒工作线程
-	int thread_cnt;			// 工作线程数目
-	int quit;				// 退出标记
+	list_head threads;		// 所有工作线程.
+	list_head tasks;		// 任务队列.
+	mutex_t *lock;			// 任务队列锁.
+	semaphore_t *sem;		// 当添加任务时，唤醒工作线程.
+	int thread_cnt;			// 工作线程数目.
+	int quit;				// 退出标记.
 };
 
 static int _thread_cnt(int cnt)
 {
-	// TODO: 根据 cpu 数目
+	// TODO: 根据 cpu 数目. 
 	if (cnt <= 0)
 		return 4;
 	else
 		return cnt;
 }
 
-// 工作线程函数
+// 工作线程函数. 
 static int _thread_proc(void *p)
 {
 	thread_pool_t *tp = (thread_pool_t*)p;
@@ -148,7 +148,7 @@ int simple_thread_pool_add_task(thread_pool_t *p, task_t *t)
 	list_add_tail(n, &p->tasks);
 	simple_mutex_unlock(p->lock);
 
-	simple_sem_post(p->sem);	// 通知有新的任务
+	simple_sem_post(p->sem);	// 通知有新的任务.
 
 	return 0;
 }

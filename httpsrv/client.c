@@ -14,7 +14,9 @@
 #  define closesocket close
 #endif // os
 #include "../include/simple/httpparser.h"
+#include "../include/simple/url.h"
 #include "client.h"
+#include "httprequest.h"
 
 static int lasterr()
 {
@@ -70,7 +72,6 @@ static HttpMessage *make_request(client *c)
 			return req;
 		}
 
-		// 到这里一般是链接中断
 		httpc_Message_release(req);
 		req = 0;
 	}
@@ -83,25 +84,36 @@ static HttpMessage *make_default_response()
 	HttpMessage *res = httpc_Message_create();
 	httpc_Message_setStartLine(res, "HTTP/1.0", "200", "OK");
 	httpc_Message_setValue(res, "Server", "test_http_srv 1.0");
+	httpc_Message_setValue(res, "Connection", "Close");	// 总是主动关闭.
 
 	return res;
 }
 
-/** 在这里处理一次完整的 http request，将结果填充到 res 中，返回 < 0 失败
+/** 在这里处理一次完整的 http request，将结果填充到 res 中，返回 < 0 失败.
  */
 static int handle_http(client *c, const HttpMessage *req, HttpMessage *res)
 {
-	return -1;
+	int rc;
+	url_t *url = simple_url_parse(req->StartLine.p2);	// start line p2 为 url
+	if (!url) {
+		fprintf(stderr, "ERR: sock(%d) parse url %s err\n", c->sock, req->StartLine.p2);
+		return -1;
+	}
+
+	rc = http_request(c, url, req, res);
+	simple_url_release(url);
+
+	return rc;
 }
 
-/** 将 res encode，发送
+/** 将 res encode，发送.
  */
 static int send_res(client *c, HttpMessage *res)
 {
-	int len = httpc_Message_get_encode_length(res);
+	int len = httpc_Message_get_encode_length(res, 1);
 	char *buf = (char*)malloc(len+1);
 	char *p = buf;
-	httpc_Message_encode(res, buf);
+	httpc_Message_encode(res, buf, 1);
 
 	while (len > 0) {
 		int rc = send(c->sock, p, len, 0);
@@ -122,11 +134,12 @@ static int send_res(client *c, HttpMessage *res)
 
 static void handle(task_t *t, void *opaque)
 {
-	/** 这里处理一次完整的 http 链接，当这个函数返回时，就中断该链接了
+	/** 这里处理一次完整的 http 链接，当这个函数返回时，就中断该链接了. 
 	 */
 	client *c = (client*)opaque;
+	int rc;
 
-	while (1) {
+	do {
 		HttpMessage *req = make_request(c), *res = 0;
 		if (!req) {
 			fprintf(stderr, "INFO: sock(%d) recv err | connection closed\n", c->sock);
@@ -135,7 +148,8 @@ static void handle(task_t *t, void *opaque)
 
 		res = make_default_response();
 		
-		if (handle_http(c, req, res) < 0) {
+		rc = handle_http(c, req, res);
+		if (rc < 0) {
 			fprintf(stderr, "ERR: sock(%d) handle http err\n", c->sock);
 
 			httpc_Message_release(req);
@@ -143,9 +157,11 @@ static void handle(task_t *t, void *opaque)
 
 			break;
 		}
-
-		// 发送 response
-		if (send_res(c, res) < 0) {
+		else if (rc > 0) {
+			// 此时说明在 handle_http 中，已经发送 res 了！！！.
+			// 一般是发送文件了 ,....
+		}
+		else if (send_res(c, res) < 0) {
 			fprintf(stderr, "ERR: sock(%d) send response err\n", c->sock);
 			httpc_Message_release(req);
 			httpc_Message_release(res);
@@ -155,11 +171,11 @@ static void handle(task_t *t, void *opaque)
 
 		httpc_Message_release(req);
 		httpc_Message_release(res);
-	}
+	} while (0);	// 对于 http pipe 来说，应该保持连接，这个简单，每次链接仅仅处理一个 http request,
+					// res 中，总是包含 Connection: close.
 
 	simple_task_destroy(t);
 	fprintf(stdout, "INFO: connection (%d) terminated!\n", c->sock);
 
 	closesocket(c->sock);
 }
-

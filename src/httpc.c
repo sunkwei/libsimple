@@ -156,7 +156,7 @@ int httpc_Message_getBody (HttpMessage *msg, const char **data)
 	return msg->bodylen;
 }
 
-int httpc_Message_get_encode_length (HttpMessage *msg)
+int httpc_Message_get_encode_length (HttpMessage *msg, int with_body)
 {
 	int len = 0;
 	list_head *pos;
@@ -181,12 +181,13 @@ int httpc_Message_get_encode_length (HttpMessage *msg)
 	len += 2;	// \r\n
 
 	/** body len */
-	len += msg->bodylen;
+	if (with_body)
+		len += msg->bodylen;
 
-	return len + 1;	// 呵呵，如果没有 body，可能需要 0 结束.
+	return len;
 }
 
-void httpc_Message_encode(HttpMessage *msg, char *buf)
+void httpc_Message_encode(HttpMessage *msg, char *buf, int with_body)
 {
 	char *p = buf;
 	list_head *pos;
@@ -204,5 +205,5 @@ void httpc_Message_encode(HttpMessage *msg, char *buf)
 	strcpy(p, "\r\n");
 	p += 2;
 
-	memcpy(p, msg->body, msg->bodylen);
+	if (with_body) memcpy(p, msg->body, msg->bodylen);
 }

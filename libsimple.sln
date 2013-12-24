@@ -5,11 +5,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsimple", "libsimple.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_threadpool", "test\test_threadpool\test_threadpool.vcxproj", "{D9392B15-5664-4B0E-AA2A-3BA1FB342648}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_tcpserver", "test\test_tcpserver\test_tcpserver.vcxproj", "{2A893363-3667-4824-B32E-D3722C01DFE6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_tcpclient", "test\test_tcpclient\test_tcpclient.vcxproj", "{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_httpparser", "test\test_httpparser\test_httpparser.vcxproj", "{3FEF1AEC-D7A3-4C03-8CCE-934EB17F8F8A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "httpsrv", "httpsrv\httpsrv\httpsrv.vcxproj", "{3CB95E3C-D697-4B1E-BEE2-DA41B6EA6B58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,6 @@ Global
 		{D9392B15-5664-4B0E-AA2A-3BA1FB342648}.Debug|Win32.Build.0 = Debug|Win32
 		{D9392B15-5664-4B0E-AA2A-3BA1FB342648}.Release|Win32.ActiveCfg = Release|Win32
 		{D9392B15-5664-4B0E-AA2A-3BA1FB342648}.Release|Win32.Build.0 = Release|Win32
-		{2A893363-3667-4824-B32E-D3722C01DFE6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2A893363-3667-4824-B32E-D3722C01DFE6}.Debug|Win32.Build.0 = Debug|Win32
-		{2A893363-3667-4824-B32E-D3722C01DFE6}.Release|Win32.ActiveCfg = Release|Win32
-		{2A893363-3667-4824-B32E-D3722C01DFE6}.Release|Win32.Build.0 = Release|Win32
 		{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}.Debug|Win32.Build.0 = Debug|Win32
 		{8DEA8F6F-E526-413C-92BB-3F31DEBCD29D}.Release|Win32.ActiveCfg = Release|Win32
@@ -37,6 +33,10 @@ Global
 		{3FEF1AEC-D7A3-4C03-8CCE-934EB17F8F8A}.Debug|Win32.Build.0 = Debug|Win32
 		{3FEF1AEC-D7A3-4C03-8CCE-934EB17F8F8A}.Release|Win32.ActiveCfg = Release|Win32
 		{3FEF1AEC-D7A3-4C03-8CCE-934EB17F8F8A}.Release|Win32.Build.0 = Release|Win32
+		{3CB95E3C-D697-4B1E-BEE2-DA41B6EA6B58}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3CB95E3C-D697-4B1E-BEE2-DA41B6EA6B58}.Debug|Win32.Build.0 = Debug|Win32
+		{3CB95E3C-D697-4B1E-BEE2-DA41B6EA6B58}.Release|Win32.ActiveCfg = Release|Win32
+		{3CB95E3C-D697-4B1E-BEE2-DA41B6EA6B58}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
