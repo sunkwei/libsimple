@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <memory.h>
 #include "../include/simple/circ_buf.h"
 #include "../include/simple/mutex.h"

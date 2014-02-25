@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
 #ifdef WIN32
 #  include <WinSock2.h>
 #  include <direct.h>

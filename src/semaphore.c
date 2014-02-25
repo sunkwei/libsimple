@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #ifdef WIN32
 #  include <Windows.h>
 #else
@@ -8,6 +7,23 @@
 #  include <time.h>
 #endif // os
 #include "../include/simple/semaphore.h"
+
+#ifdef __MACH__
+#include <sys/time.h>
+//clock_gettime is not implemented on OSX
+
+#define CLOCK_REALTIME 0
+
+static int clock_gettime(int id, struct timespec* t) 
+{
+	struct timeval now;
+	int rv = gettimeofday(&now, NULL);
+	if (rv) return rv;
+	t->tv_sec  = now.tv_sec;
+	t->tv_nsec = now.tv_usec * 1000;
+	return 0;
+}
+#endif
 
 struct semaphore_t
 {

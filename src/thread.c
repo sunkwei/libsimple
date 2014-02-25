@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <stdint.h>
 #ifdef WIN32
 #  include <Windows.h>
@@ -8,7 +7,10 @@
 #else
 #  include <pthread.h>
 #  include <unistd.h>
-#  include <syscall.h>
+#  ifdef __MACH__
+#  else
+#    include <syscall.h>
+#  endif
 #endif // 
 #include "../include/simple/thread.h"
 #include "../include/simple/semaphore.h"
@@ -49,7 +51,11 @@ int simple_thread_id()
 #ifdef WIN32
 	return GetCurrentThreadId();
 #else
+#  ifdef __MACH__
+	return pthread_mach_thread_np(pthread_self());
+#  else
 	return syscall(SYS_gettid);
+#  endif
 #endif // os
 }
 
