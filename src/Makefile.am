@@ -1,19 +1,19 @@
 include $(top_srcdir)/common.am
 
-lib_LIBRARIES=libsimple.a
+lib_LTLIBRARIES=libsimple.la
 
-libsimple_a_SOURCES= circ_buf.c mutex.c semaphore.c \
+libsimple_la_SOURCES= circ_buf.c mutex.c semaphore.c \
 		     thread.c threadpool.c tcpclient.c \
 		     httpc.c httpparser.c fd.c	\
 		     urlparser.c
-libsimple_a_CFLAGS= -g -fPIC
+libsimple_la_CFLAGS= -g -fPIC
 
 if WIN32
-libsimple_a_SOURCES+= regex.c
-libsimple_a_CFLAGS+= -DSTDC_HEADERS
+libsimple_la_SOURCES+= regex.c
+libsimple_la_CFLAGS+= -DSTDC_HEADERS
 endif
 
 if OSX
-libsimple_a_SOURCES+= sem_timedwait.c
+libsimple_la_SOURCES+= sem_timedwait.c
 endif
 

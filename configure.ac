@@ -16,6 +16,8 @@ AC_CONFIG_FILES([Makefile])
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_RANLIB
+AC_PROG_LIBTOOL
+AC_LIBTOOL_WIN32_DLL
 
 # Checks for libraries.
 
