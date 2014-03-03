@@ -1,6 +1,6 @@
 include $(top_srcdir)/common.am
 
-libsimple=$(top_builddir)/src/libsimple.a
+libsimple=$(top_builddir)/src/libsimple.la
 
 bin_PROGRAMS=	httpsrv_bin
 

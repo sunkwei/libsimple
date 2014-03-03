@@ -1,6 +1,6 @@
 include $(top_srcdir)/common.am
 
-libsimple=$(top_builddir)/src/libsimple.a
+libsimple=$(top_builddir)/src/libsimple.la
 
 bin_PROGRAMS=test_threadpool_bin test_tcpclient_bin \
 	     test_httpparser_bin
