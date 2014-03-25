@@ -4,6 +4,7 @@
 #include "TracePolicy.h"
 #include "Ptz.h"
 #include "TeacherDetecting.h"
+#include "StateDuration.h"
 
 /** 教师云台控制，自身为一工作线程，因为云台操作往往比较耗时，不应该阻塞图像处理 */
 class TeacherPtz : public Ptz
@@ -253,4 +254,7 @@ private:
 
 	void handle_invalid_data(double c);
 	void handle_valid_data(double c, const DetectedData &data);
+
+	StateDuration valid_duration_; // 0: 稳定态，1: 需要剧烈转动，2: 目标丢失
 };
+

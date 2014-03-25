@@ -322,8 +322,14 @@ void TeacherPtz::set_detected_data2(const DetectedData &data)
 
 void TeacherPtz::handle_invalid_data(double c)
 {
+	valid_duration_.set_state(2);
+	if (valid_duration_.duration() > policy_->time_to_fullview_after_no_target())
+		stable_ = false;
+
 	// 检查是否长时间没有目标，云台是否需要归位
-	if (chk_valid_data_.duration(c) > policy_->time_to_reset_ptz()) {
+	if (ptz()) ptz_stop(ptz());
+
+	if (valid_duration_.duration() > policy_->time_to_reset_ptz()) {
 		// 需要防止不停地 reset 
 		if (!reseted_) {
 			reset_ptz();
@@ -341,4 +347,38 @@ void TeacherPtz::handle_valid_data(double c, const DetectedData &data)
 			2. 如果目标不在视野中，则快速转动，将目标拉到视野中；
 	 */
 
+	double td = get_target_deflection(data);
+	double cd = get_current_deflection();
+	double hv = get_current_half_view_angle();
+
+	if (cd - hv < td && cd + hv > td) {
+		// 恩，目标在视野范围内
+		valid_duration_.set_state(0);
+		if (valid_duration_.duration() > policy_->time_to_closeview())
+			stable_ = true;
+
+		if (cd - fva / 5 > td)
+			ptz_left(ptz(), 1);
+		else if (cd + fva / 5 < td)
+			ptz_right(ptz(), 1);
+		else
+			ptz_stop(ptz());
+	}
+	else {
+		valid_duration_.set_state(1);
+		stable_ = false;
+
+		// 直接转动指向目标
+		if (ptz()) {
+			ptz_stop(ptz());
+
+			ca_.p = (data.poss[0].left + data.poss[0].right)/2;
+			double dh = TeacherDetecting::get_angle(ca_);
+			dh = dh * 180.0 / M_PI / ptz_params_.min_angle_hori;
+			int hv = ptz_left_ + (int)dh;
+
+			add(task_ptz_set_position(ptz(), hv, ptz_v_, ptz_z_));
+		}
+	}
 }
+
