@@ -5,7 +5,7 @@
 
 typedef struct key_value_t
 {
-	list_head head;	// Á´±í.
+	list_head head;	// é“¾è¡¨.
 
 	char *key;
 	char *value;
@@ -24,10 +24,10 @@ typedef struct url_t
 	char *query;
 	char *fragment;
 
-	list_head query_pairs;	// Á´±íÖ¸Ïò key value 
+	list_head query_pairs;	// é“¾è¡¨æŒ‡å‘ key value 
 } url_t;
 
-/** ¸ù¾İ src ½âÎöµÃµ½ url_t ½á¹¹£¬±ØĞëÊ¹ÓÃ simple_url_release() ÊÍ·Å */
+/** æ ¹æ® src è§£æå¾—åˆ° url_t ç»“æ„ï¼Œå¿…é¡»ä½¿ç”¨ simple_url_release() é‡Šæ”¾ */
 url_t *simple_url_parse(const char *str);
 void simple_url_release(url_t *u);
 

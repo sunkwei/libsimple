@@ -3,19 +3,19 @@
 
 typedef struct tcpclient_t tcpclient_t;
 
-/** ´ò¿ªµ½ server:port µÄ tcp Á´½Ó 
-	@param timeout: ³¬Ê±£¬3000 ¶ÔÓ¦ 3Ãë
+/** æ‰“å¼€åˆ° server:port çš„ tcp é“¾æŽ¥ 
+	@param timeout: è¶…æ—¶ï¼Œ3000 å¯¹åº” 3ç§’
  */
 tcpclient_t *simple_tcpclient_open(const char *server, int port, int timeout);
 void simple_tcpclient_close(tcpclient_t *tc);
 
-/** ·µ»Ø -1: api ´íÎó£¬-2 ³¬Ê± */
+/** è¿”å›ž -1: api é”™è¯¯ï¼Œ-2 è¶…æ—¶ */
 int simple_tcpclient_send(tcpclient_t *tc, const void *data, int len, int *sent);
 int simple_tcpclient_sendt(tcpclient_t *tc, const void *data, int len, int *sent, int timeout);
 int simple_tcpclient_sendn(tcpclient_t *tc, const void *data, int len, int *sent);
 int simple_tcpclient_sendnt(tcpclient_t *tc, const void *data, int len, int *sent, int timeout);
 
-/** ·µ»Ø -1: api ´íÎó£¬-2 ³¬Ê± */
+/** è¿”å›ž -1: api é”™è¯¯ï¼Œ-2 è¶…æ—¶ */
 int simple_tcpclient_recv(tcpclient_t *tc, void *buf, int len, int *recved);
 int simple_tcpclient_recvt(tcpclient_t *tc, void *buf, int len, int *recved, int timeout);
 int simple_tcpclient_recvn(tcpclient_t *tc, void *buf, int len, int *recved);

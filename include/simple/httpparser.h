@@ -18,7 +18,7 @@ typedef enum HttpParserState
 // header
 struct HttpHeader
 {
-	list_head head;	// ÓÃÓÚÖ§³Ö list
+	list_head head;	// ç”¨äºæ”¯æŒ list
 
 	char *key;
 	char *value;
@@ -30,14 +30,14 @@ struct HttpMessage
 {
 	// Start line
 	struct {
-		/** ¶ÔÓÚ request: GET /path/cmd?aa=x HTTP/1.1 */
-		/** ¶ÔÓÚ response: HTTP/1.1  200  OK */
+		/** å¯¹äº request: GET /path/cmd?aa=x HTTP/1.1 */
+		/** å¯¹äº response: HTTP/1.1  200  OK */
 		char *p1;
 		char *p2;
 		char *p3;
 	} StartLine;
 
-	/** Ê¹ÓÃ list_for_each  ·ÃÎÊ */
+	/** ä½¿ç”¨ list_for_each  è®¿é—® */
 	list_head headers;
 	int header_cnt;
 
@@ -61,12 +61,12 @@ int httpc_Message_appendBody(HttpMessage *msg, const char *body, int len);
 void httpc_Message_clearBody(HttpMessage *msg);
 int httpc_Message_getBody(HttpMessage *msg, const char **body);
 
-/** ·µ»ØĞèÒª encode µÄ×Ö½Ú³¤¶È */
+/** è¿”å›éœ€è¦ encode çš„å­—èŠ‚é•¿åº¦ */
 int httpc_Message_get_encode_length(HttpMessage *msg, int with_body);
-/** buf ³¤¶ÈÖÁÉÙ httpc_Message_get_encode_length() */
+/** buf é•¿åº¦è‡³å°‘ httpc_Message_get_encode_length() */
 void httpc_Message_encode(HttpMessage *msg, char *buf, int with_body);
 
-/** ·µ»Ø½âÎö×´Ì¬ */
+/** è¿”å›è§£æçŠ¶æ€ */
 HttpParserState httpc_Message_state(HttpMessage *msg);
 
 HttpMessage *httpc_parser_parse(HttpMessage *saved, const char *data, int len, int *used);

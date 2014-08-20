@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-/** ¶ÔÓ¦ÃèÊöÎÄ¼ş£¬socket£¬...
+/** å¯¹åº”æè¿°æ–‡ä»¶ï¼Œsocketï¼Œ...
  */
 typedef struct fd_t fd_t;
 
@@ -11,12 +11,12 @@ typedef struct fd_t fd_t;
 fd_t *simple_fd_open_from_socket(int sock);
 fd_t *simple_fd_open_from_file(FILE *fp);
 
-/** ×¢Òâ£¬½«¹Ø±ÕÔ­Ê¼ sock, fp */
+/** æ³¨æ„ï¼Œå°†å…³é—­åŸå§‹ sock, fp */
 void simple_fd_close(fd_t *fd);
 void simple_fd_detach(fd_t *fd);
 
 
-/** ·µ»Ø×îºó²Ù×÷´íÎó */
+/** è¿”å›æœ€åæ“ä½œé”™è¯¯ */
 int simple_fd_lasterr(fd_t *fd);
 const char *simple_fd_lasterr_string(fd_t *fd, int err);
 
